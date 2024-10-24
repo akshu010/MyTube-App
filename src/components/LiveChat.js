@@ -9,16 +9,16 @@ const LiveChat = () => {
   const chatMessages = useSelector((state) => state.chat.messages);
   useEffect(() => {
     const polling = setInterval(() => {
-      console.log("API Polling");
       dispatch(
         addMessage({
           name: randomNameGenerater(),
           message: randomMessageGenerator(20) + "🚀",
         })
       );
-    }, 500);
+    }, 2000);
 
     return () => clearInterval(polling);
+    // eslint-disable-next-line
   }, []);
 
   return (

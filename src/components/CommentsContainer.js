@@ -1,112 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { COMMENTS_API_KEY } from "../utils/constants";
 
-const commentsData = [
-  {
-    name: "Akshay Saini",
-    text: "Lorem ipsum dolor sit amet, consectetur adip",
-    replies: [],
-  },
-  {
-    name: "Akshay Saini",
-    text: "Lorem ipsum dolor sit amet, consectetur adip",
-    replies: [
-      {
-        name: "Akshay Saini",
-        text: "Lorem ipsum dolor sit amet, consectetur adip",
-        replies: [],
-      },
-      {
-        name: "Akshay Saini",
-        text: "Lorem ipsum dolor sit amet, consectetur adip",
-        replies: [
-          {
-            name: "Akshay Saini",
-            text: "Lorem ipsum dolor sit amet, consectetur adip",
-            replies: [
-              {
-                name: "Akshay Saini",
-                text: "Lorem ipsum dolor sit amet, consectetur adip",
-                replies: [
-                  {
-                    name: "Akshay Saini",
-                    text: "Lorem ipsum dolor sit amet, consectetur adip",
-                    replies: [
-                      {
-                        name: "Akshay Saini",
-                        text: "Lorem ipsum dolor sit amet, consectetur adip",
-                        replies: [],
-                      },
-                    ],
-                  },
-                  {
-                    name: "Akshay Saini",
-                    text: "Lorem ipsum dolor sit amet, consectetur adip",
-                    replies: [],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Akshay Saini",
-    text: "Lorem ipsum dolor sit amet, consectetur adip",
-    replies: [],
-  },
-  {
-    name: "Akshay Saini",
-    text: "Lorem ipsum dolor sit amet, consectetur adip",
-    replies: [],
-  },
-  {
-    name: "Akshay Saini",
-    text: "Lorem ipsum dolor sit amet, consectetur adip",
-    replies: [],
-  },
-  {
-    name: "Akshay Saini",
-    text: "Lorem ipsum dolor sit amet, consectetur adip",
-    replies: [],
-  },
-];
+const CommentsContainer = ({ videoId }) => {
+  const [comments, setComments] = useState([]);
+  const [searchParems] = useSearchParams();
 
-const Comment = ({ data }) => {
-  const { name, text, replies } = data;
+  useEffect(() => {
+    fetchComments();
+    // eslint-disable-next-line
+  }, []);
+
+  const fetchComments = async () => {
+    const data = await fetch(COMMENTS_API_KEY + searchParems.get("v"));
+    const json = await data.json();
+    setComments(json.items || []);
+    console.log(json);
+    console.log(
+      json?.items?.[2]?.snippet?.topLevelComment?.snippet?.textDisplay
+    );
+  };
+
   return (
-    <div className="flex shadow-sm bg-gray-100 p-2 rounded-lg my-2">
-      <img
-        className="w-12 h-12"
-        alt="user"
-        src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"
-      />
-      <div className="px-3">
-        <p className="font-bold">{name}</p>
-        <p>{text}</p>
-      </div>
-    </div>
-  );
-};
-
-const CommentsList = ({ comments }) => {
-  // Disclaimer: Don't use indexes as keys
-  return comments.map((comment, index) => (
-    <div key={index}>
-      <Comment data={comment} />
-      <div className="pl-5 border border-l-black ml-5">
-        <CommentsList comments={comment.replies} />
-      </div>
-    </div>
-  ));
-};
-
-const CommentsContainer = () => {
-  return (
-    <div className="m-5 p-2">
-      <h1 className="text-2xl font-bold">Comments: </h1>
-      <CommentsList comments={commentsData} />
+    <div className="p-4 space-y-6 bg-gray-50 rounded-lg">
+      {comments.map((comment) => (
+        <div
+          key={comment.id}
+          className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm flex gap-4 w-[75%]"
+        >
+          <img
+            className="w-10 h-10 rounded-full object-cover"
+            src={comment.snippet.topLevelComment.snippet.authorProfileImageUrl}
+            alt="Author profile"
+          />
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <p className="font-semibold text-gray-900">
+                {comment.snippet.topLevelComment.snippet.authorDisplayName}
+              </p>
+              <p className="text-sm text-gray-500">
+                {new Date(
+                  comment.snippet.topLevelComment.snippet.publishedAt
+                ).toLocaleDateString()}
+              </p>
+            </div>
+            <p
+              className="text-gray-700 mt-2 leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: comment.snippet.topLevelComment.snippet.textDisplay,
+              }}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
