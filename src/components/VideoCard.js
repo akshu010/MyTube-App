@@ -11,7 +11,7 @@ const VideoCard = ({ info }) => {
   const formattedDate = publishedAt.replace(/T\d{2}:\d{2}:\d{2}Z/, "");
 
   return (
-    <div className="flex flex-col w-72 mx-auto my-4 shadow-lg rounded-xl overflow-hidden bg-white cursor-pointer">
+    <div className="flex flex-col w-72 mx-auto my-4 shadow-lg rounded-xl overflow-hidden bg-white cursor-pointer hover:scale-105 transition-all ease-out">
       <img
         src={thumbnails.high.url}
         alt={title}
